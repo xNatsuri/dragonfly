@@ -7,6 +7,7 @@ import (
 )
 
 type SnowLayer struct {
+	replaceable
 	gravityAffected
 	solid
 
@@ -26,15 +27,8 @@ func (s SnowLayer) Activate(pos cube.Pos, _ cube.Face, w *world.World, u item.Us
 		} else {
 			w.SetBlock(pos, Snow{}, nil)
 		}
-
 		return true
 	}
-
-	if b, ok := h.Item().(world.Block); ok && !s.Covered {
-		w.SetBlock(pos, b, nil)
-		return true
-	}
-
 	return false
 }
 
