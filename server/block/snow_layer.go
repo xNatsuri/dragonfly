@@ -46,14 +46,17 @@ func (s SnowLayer) NeighbourUpdateTick(pos, _ cube.Pos, w *world.World) {
 // BreakInfo ...
 func (s SnowLayer) BreakInfo() BreakInfo {
 	return newBreakInfo(0.1, alwaysHarvestable, shovelEffective, func(t item.Tool, enchantments []item.Enchantment) []item.Stack {
-		switch s.Layers {
-		case 3, 4:
-			return []item.Stack{item.NewStack(item.Snowball{}, 2)}
-		case 5, 6:
-			return []item.Stack{item.NewStack(item.Snowball{}, 3)}
-		default:
-			return []item.Stack{item.NewStack(item.Snowball{}, 1)}
+		if hasSilkTouch(enchantments) {
+			switch s.Layers {
+			case 3, 4:
+				return []item.Stack{item.NewStack(item.Snowball{}, 2)}
+			case 5, 6:
+				return []item.Stack{item.NewStack(item.Snowball{}, 3)}
+			default:
+				return []item.Stack{item.NewStack(item.Snowball{}, 1)}
+			}
 		}
+		return nil
 	})
 }
 
