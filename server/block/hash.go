@@ -13,6 +13,7 @@ const (
 	hashBarrier
 	hashBasalt
 	hashBeacon
+	hashBed
 	hashBedrock
 	hashBeetrootSeeds
 	hashBlackstone
@@ -231,6 +232,11 @@ func (b Basalt) Hash() uint64 {
 // Hash ...
 func (Beacon) Hash() uint64 {
 	return hashBeacon
+}
+
+// Hash ...
+func (b Bed) Hash() uint64 {
+	return hashBed | uint64(b.Facing)<<8 | uint64(boolByte(b.HeadSide))<<10
 }
 
 // Hash ...
