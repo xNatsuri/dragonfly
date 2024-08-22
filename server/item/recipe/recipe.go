@@ -69,9 +69,9 @@ type PotionContainerChange struct {
 }
 
 // NewPotionContainerChange creates a new potion container change recipe and returns it.
-func NewPotionContainerChange(input, output world.Item, ingredient item.Stack) PotionContainerChange {
+func NewPotionContainerChange(input, output world.Item, reagent item.Stack) PotionContainerChange {
 	return PotionContainerChange{recipe: recipe{
-		input:  []Item{item.NewStack(input, 1), ingredient},
+		input:  []Item{item.NewStack(input, 1), reagent},
 		output: []item.Stack{item.NewStack(output, 1)},
 		block:  "brewing_stand",
 	}}
@@ -83,9 +83,9 @@ type Potion struct {
 }
 
 // NewPotion creates a new potion recipe and returns it.
-func NewPotion(input, ingredient Item, output item.Stack) Potion {
+func NewPotion(input, reagent Item, output item.Stack) Potion {
 	return Potion{recipe: recipe{
-		input:  []Item{input, ingredient},
+		input:  []Item{input, reagent},
 		output: []item.Stack{output},
 		block:  "brewing_stand",
 	}}
