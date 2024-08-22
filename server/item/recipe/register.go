@@ -12,7 +12,6 @@ func Recipes() []Recipe {
 	return slices.Clone(recipes)
 }
 
-// Register registers a new recipe.
-func Register(recipe Recipe) {
-	recipes = append(recipes, recipe)
+func Register(r Recipe) {
+	recipes = append(recipes, r)
 }

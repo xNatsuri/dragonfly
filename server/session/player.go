@@ -284,6 +284,12 @@ func (s *Session) invByID(id int32) (*inventory.Inventory, bool) {
 				return s.ui, true
 			}
 		}
+	case protocol.ContainerBrewingStandInput, protocol.ContainerBrewingStandResult, protocol.ContainerBrewingStandFuel:
+		if s.containerOpened.Load() {
+			if _, brewingStand := s.c.World().Block(s.openedPos.Load()).(block.BrewingStand); brewingStand {
+				return s.openedWindow.Load(), true
+			}
+		}
 	case protocol.ContainerAnvilInput, protocol.ContainerAnvilMaterial:
 		if s.containerOpened.Load() {
 			if _, anvil := s.c.World().Block(s.openedPos.Load()).(block.Anvil); anvil {
