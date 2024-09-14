@@ -118,6 +118,7 @@ func New(name string, skin skin.Skin, pos mgl64.Vec3) *Player {
 				p.broadcastItems(slot, before, after)
 			}
 		}),
+		heldSlot:   &atomic.Uint32{},
 		enderChest: inventory.New(27, nil),
 		uuid:       uuid.New(),
 		offHand:    inventory.New(1, p.broadcastItems),
@@ -145,6 +146,7 @@ func New(name string, skin skin.Skin, pos mgl64.Vec3) *Player {
 	p.enchantSeed.Store(rand.Int63())
 	p.scale.Store(math.Float64bits(1))
 	p.pos.Store(&pos)
+	p.vel.Store(&mgl64.Vec3{})
 	return p
 }
 
