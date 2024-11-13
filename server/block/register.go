@@ -84,6 +84,7 @@ func init() {
 	world.RegisterBlock(RawCopper{})
 	world.RegisterBlock(RawGold{})
 	world.RegisterBlock(RawIron{})
+	world.RegisterBlock(RedstoneBlock{})
 	world.RegisterBlock(ReinforcedDeepslate{})
 	world.RegisterBlock(Sand{Red: true})
 	world.RegisterBlock(Sand{})
@@ -122,6 +123,7 @@ func init() {
 	registerAll(allBlackstone())
 	registerAll(allBlastFurnaces())
 	registerAll(allBoneBlock())
+	registerAll(allButtons())
 	registerAll(allCactus())
 	registerAll(allCake())
 	registerAll(allCampfires())
@@ -157,6 +159,7 @@ func init() {
 	registerAll(allLanterns())
 	registerAll(allLava())
 	registerAll(allLeaves())
+	registerAll(allLevers())
 	registerAll(allLecterns())
 	registerAll(allLight())
 	registerAll(allLitPumpkins())
@@ -173,6 +176,9 @@ func init() {
 	registerAll(allPumpkins())
 	registerAll(allPurpurs())
 	registerAll(allQuartz())
+	registerAll(allRedstoneRepeaters())
+	registerAll(allRedstoneTorches())
+	registerAll(allRedstoneWires())
 	registerAll(allSandstones())
 	registerAll(allSeaPickles())
 	registerAll(allSigns())
@@ -270,6 +276,7 @@ func init() {
 	world.RegisterItem(Kelp{})
 	world.RegisterItem(Ladder{})
 	world.RegisterItem(Lapis{})
+	world.RegisterItem(Lever{})
 	world.RegisterItem(Lectern{})
 	world.RegisterItem(LitPumpkin{})
 	world.RegisterItem(Loom{})
@@ -309,6 +316,10 @@ func init() {
 	world.RegisterItem(RawCopper{})
 	world.RegisterItem(RawGold{})
 	world.RegisterItem(RawIron{})
+	world.RegisterItem(RedstoneBlock{})
+	world.RegisterItem(RedstoneRepeater{})
+	world.RegisterItem(RedstoneTorch{})
+	world.RegisterItem(RedstoneWire{})
 	world.RegisterItem(ReinforcedDeepslate{})
 	world.RegisterItem(Sand{Red: true})
 	world.RegisterItem(Sand{})
@@ -356,6 +367,9 @@ func init() {
 	}
 	for _, t := range AnvilTypes() {
 		world.RegisterItem(Anvil{Type: t})
+	}
+	for _, t := range ButtonTypes() {
+		world.RegisterItem(Button{Type: t})
 	}
 	for _, c := range item.Colours() {
 		world.RegisterItem(Banner{Colour: c})

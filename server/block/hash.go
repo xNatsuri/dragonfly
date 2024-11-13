@@ -23,6 +23,7 @@ const (
 	hashBone
 	hashBookshelf
 	hashBricks
+	hashButton
 	hashCactus
 	hashCake
 	hashCalcite
@@ -99,6 +100,7 @@ const (
 	hashLava
 	hashLeaves
 	hashLectern
+	hashLever
 	hashLight
 	hashLitPumpkin
 	hashLog
@@ -137,6 +139,10 @@ const (
 	hashRawCopper
 	hashRawGold
 	hashRawIron
+	hashRedstoneBlock
+	hashRedstoneRepeater
+	hashRedstoneTorch
+	hashRedstoneWire
 	hashReinforcedDeepslate
 	hashSand
 	hashSandstone
@@ -257,6 +263,10 @@ func (Bookshelf) Hash() (uint64, uint64) {
 
 func (Bricks) Hash() (uint64, uint64) {
 	return hashBricks, 0
+}
+
+func (b Button) Hash() (uint64, uint64) {
+	return hashButton, uint64(b.Type.Uint8()) | uint64(b.Facing)<<6 | uint64(boolByte(b.Pressed))<<9
 }
 
 func (c Cactus) Hash() (uint64, uint64) {
@@ -563,6 +573,10 @@ func (l Lectern) Hash() (uint64, uint64) {
 	return hashLectern, uint64(l.Facing)
 }
 
+func (l Lever) Hash() (uint64, uint64) {
+	return hashLever, uint64(boolByte(l.Powered)) | uint64(l.Facing)<<1 | uint64(l.Direction)<<4
+}
+
 func (l Light) Hash() (uint64, uint64) {
 	return hashLight, uint64(l.Level)
 }
@@ -715,6 +729,22 @@ func (RawIron) Hash() (uint64, uint64) {
 	return hashRawIron, 0
 }
 
+func (RedstoneBlock) Hash() (uint64, uint64) {
+	return hashRedstoneBlock, 0
+}
+
+func (r RedstoneRepeater) Hash() (uint64, uint64) {
+	return hashRedstoneRepeater, uint64(r.Facing) | uint64(boolByte(r.Powered))<<2 | uint64(r.Delay)<<3
+}
+
+func (t RedstoneTorch) Hash() (uint64, uint64) {
+	return hashRedstoneTorch, uint64(t.Facing) | uint64(boolByte(t.Lit))<<3
+}
+
+func (r RedstoneWire) Hash() (uint64, uint64) {
+	return hashRedstoneWire, uint64(r.Power)
+}
+
 func (ReinforcedDeepslate) Hash() (uint64, uint64) {
 	return hashReinforcedDeepslate, 0
 }
@@ -748,7 +778,7 @@ func (s Sign) Hash() (uint64, uint64) {
 }
 
 func (s Skull) Hash() (uint64, uint64) {
-	return hashSkull, uint64(s.Attach.FaceUint8())
+	return hashSkull, uint64(s.Type.Uint8()) | uint64(s.Attach.FaceUint8())<<3
 }
 
 func (s Slab) Hash() (uint64, uint64) {

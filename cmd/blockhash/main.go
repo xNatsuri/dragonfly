@@ -235,6 +235,8 @@ func (b *hashBuilder) ftype(structName, s string, expr ast.Expr, directives map[
 		return "uint64(" + s + ")", 8
 	case "Block":
 		return "world.BlockHash(" + s + ")", 32
+	case "ButtonType":
+		return "uint64(" + s + ".Uint8())", 6
 	case "Attachment":
 		if _, ok := directives["facing_only"]; ok {
 			log.Println("Found directive: 'facing_only'")
@@ -246,7 +248,7 @@ func (b *hashBuilder) ftype(structName, s string, expr ast.Expr, directives map[
 	case "WoodType", "FlowerType", "DoubleFlowerType", "Colour":
 		// Assuming these were all based on metadata, it should be safe to assume a bit size of 4 for this.
 		return "uint64(" + s + ".Uint8())", 4
-	case "CoralType":
+	case "CoralType", "SkullType":
 		return "uint64(" + s + ".Uint8())", 3
 	case "AnvilType", "SandstoneType", "PrismarineType", "StoneBricksType", "NetherBricksType", "FroglightType", "WallConnectionType", "BlackstoneType", "DeepslateType", "TallGrassType":
 		return "uint64(" + s + ".Uint8())", 2
@@ -259,7 +261,7 @@ func (b *hashBuilder) ftype(structName, s string, expr ast.Expr, directives map[
 	default:
 		log.Println("Found unhandled field type", "'"+name+"'", "in block", structName+".", "Assuming this field is not included in block states. Please make sure this is correct or add the type to cmd/blockhash.")
 	}
-	return "", 0
+	return "uint64(" + s + ")", 0
 }
 
 func (b *hashBuilder) resolveBlocks() {

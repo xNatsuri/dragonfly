@@ -17,6 +17,19 @@ type TNT struct {
 	igniter world.Entity
 }
 
+// NeighbourUpdateTick ...
+func (t TNT) NeighbourUpdateTick(pos, _ cube.Pos, w *world.World) {
+	t.RedstoneUpdate(pos, w)
+}
+
+// RedstoneUpdate ...
+func (t TNT) RedstoneUpdate(pos cube.Pos, w *world.World) {
+	if receivedRedstonePower(pos, w) {
+		//TODO: check if the tnt is already ignited.
+		t.Ignite(pos, w, t.igniter)
+	}
+}
+
 // Activate ...
 func (t TNT) Activate(pos cube.Pos, _ cube.Face, w *world.World, u item.User, ctx *item.UseContext) bool {
 	held, _ := u.HeldItems()
