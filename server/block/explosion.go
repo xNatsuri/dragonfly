@@ -3,6 +3,7 @@ package block
 import (
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/block/cube/trace"
+	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/df-mc/dragonfly/server/world/particle"
@@ -98,6 +99,11 @@ func (c ExplosionConfig) Explode(tx *world.Tx, explosionPos mgl64.Vec3) {
 	)
 
 	for e := range tx.EntitiesWithin(box.Grow(2)) {
+		ctx := event.C(tx)
+		if tx.World().Handler().HandleExplosion(ctx, e, cube.PosFromVec3(e.Position())); ctx.Cancelled() {
+			continue
+		}
+
 		pos := e.Position()
 		dist := pos.Sub(explosionPos).Len()
 		if dist > d || dist == 0 {
@@ -132,7 +138,13 @@ func (c ExplosionConfig) Explode(tx *world.Tx, explosionPos mgl64.Vec3) {
 			}
 		}
 	}
+
 	for _, pos := range affectedBlocks {
+		ctx := event.C(tx)
+		if tx.World().Handler().HandleExplosion(ctx, nil, pos); ctx.Cancelled() {
+			continue
+		}
+
 		bl := tx.Block(pos)
 		if explodable, ok := bl.(Explodable); ok {
 			explodable.Explode(explosionPos, pos, tx, c)
