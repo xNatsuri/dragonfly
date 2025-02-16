@@ -128,8 +128,9 @@ func (c ExplosionConfig) Explode(tx *world.Tx, explosionPos mgl64.Vec3) {
 	}
 
 	ctx := event.C(tx)
-	spawnFire := true
-	if tx.World().Handler().HandleExplosion(ctx, &affectedEntities, &affectedBlocks, &spawnFire); ctx.Cancelled() {
+	spawnFire := c.SpawnFire
+	itemDropChance := c.ItemDropChance
+	if tx.World().Handler().HandleExplosion(ctx, &affectedEntities, &affectedBlocks, &itemDropChance, &spawnFire); ctx.Cancelled() {
 		return
 	}
 
@@ -143,7 +144,7 @@ func (c ExplosionConfig) Explode(tx *world.Tx, explosionPos mgl64.Vec3) {
 				breakHandler(pos, tx, nil)
 			}
 			tx.SetBlock(pos, nil, nil)
-			if c.ItemDropChance > r.Float64() {
+			if itemDropChance > r.Float64() {
 				for _, drop := range breakable.BreakInfo().Drops(item.ToolNone{}, nil) {
 					dropItem(tx, drop, pos.Vec3Centre())
 				}
@@ -164,7 +165,7 @@ func (c ExplosionConfig) Explode(tx *world.Tx, explosionPos mgl64.Vec3) {
 		}
 	}
 
-	if c.SpawnFire && spawnFire {
+	if spawnFire {
 		for _, pos := range affectedBlocks {
 			if r.IntN(3) == 0 {
 				if _, ok := tx.Block(pos).(Air); ok && tx.Block(pos.Side(cube.FaceDown)).Model().FaceSolid(pos, cube.FaceUp, tx) {
