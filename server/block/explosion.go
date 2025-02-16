@@ -98,21 +98,9 @@ func (c ExplosionConfig) Explode(tx *world.Tx, explosionPos mgl64.Vec3) {
 		math.Ceil(explosionPos[2]+d+1),
 	)
 
+	affectedEntities := make([]world.Entity, 0, 32)
 	for e := range tx.EntitiesWithin(box.Grow(2)) {
-		ctx := event.C(tx)
-		if tx.World().Handler().HandleExplosion(ctx, e, cube.PosFromVec3(e.Position())); ctx.Cancelled() {
-			continue
-		}
-
-		pos := e.Position()
-		dist := pos.Sub(explosionPos).Len()
-		if dist > d || dist == 0 {
-			continue
-		}
-		if explodable, ok := e.(ExplodableEntity); ok {
-			impact := (1 - dist/d) * exposure(tx, explosionPos, e)
-			explodable.Explode(explosionPos, impact, c)
-		}
+		affectedEntities = append(affectedEntities, e)
 	}
 
 	affectedBlocks := make([]cube.Pos, 0, 32)
@@ -139,12 +127,13 @@ func (c ExplosionConfig) Explode(tx *world.Tx, explosionPos mgl64.Vec3) {
 		}
 	}
 
-	for _, pos := range affectedBlocks {
-		ctx := event.C(tx)
-		if tx.World().Handler().HandleExplosion(ctx, nil, pos); ctx.Cancelled() {
-			continue
-		}
+	ctx := event.C(tx)
+	spawnFire := true
+	if tx.World().Handler().HandleExplosion(ctx, &affectedEntities, &affectedBlocks, &spawnFire); ctx.Cancelled() {
+		return
+	}
 
+	for _, pos := range affectedBlocks {
 		bl := tx.Block(pos)
 		if explodable, ok := bl.(Explodable); ok {
 			explodable.Explode(explosionPos, pos, tx, c)
@@ -161,7 +150,21 @@ func (c ExplosionConfig) Explode(tx *world.Tx, explosionPos mgl64.Vec3) {
 			}
 		}
 	}
-	if c.SpawnFire {
+
+	for _, e := range affectedEntities {
+		pos := e.Position()
+		dist := pos.Sub(explosionPos).Len()
+		if dist > d || dist == 0 {
+			continue
+		}
+
+		if explodable, ok := e.(ExplodableEntity); ok {
+			impact := (1 - dist/d) * exposure(tx, explosionPos, e)
+			explodable.Explode(explosionPos, impact, c)
+		}
+	}
+
+	if c.SpawnFire && spawnFire {
 		for _, pos := range affectedBlocks {
 			if r.IntN(3) == 0 {
 				if _, ok := tx.Block(pos).(Air); ok && tx.Block(pos.Side(cube.FaceDown)).Model().FaceSolid(pos, cube.FaceUp, tx) {
