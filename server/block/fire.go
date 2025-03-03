@@ -8,6 +8,7 @@ import (
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/item/enchantment"
 	"github.com/df-mc/dragonfly/server/world"
+	"github.com/df-mc/dragonfly/server/world/portal"
 	"math/rand/v2"
 	"time"
 )
@@ -232,6 +233,20 @@ func (f Fire) NeighbourUpdateTick(pos, changedNeighbour cube.Pos, tx *world.Tx) 
 			return
 		}
 	}
+}
+
+// Place ...
+func (Fire) Place(pos cube.Pos, tx *world.Tx) bool {
+	for _, f := range cube.Faces() {
+		if o, ok := tx.Block(pos.Side(f)).(Obsidian); ok && !o.Crying {
+			if p, ok := portal.NetherPortalFromPos(tx, pos); ok && p.Framed() && !p.Activated(tx) {
+				p.Activate(tx)
+				return false
+			}
+			return true
+		}
+	}
+	return true
 }
 
 // HasLiquidDrops ...

@@ -38,6 +38,12 @@ func (tx *Tx) Range() cube.Range {
 // needing to set a lot of blocks to the world. BuildStructure may be used
 // instead.
 func (tx *Tx) SetBlock(pos cube.Pos, b Block, opts *SetOpts) {
+	if p, ok := b.(interface {
+		Place(pos cube.Pos, w *Tx) bool
+	}); ok && !p.Place(pos, tx) {
+		// Don't place the block.
+		return
+	}
 	tx.World().setBlock(pos, b, opts)
 }
 
