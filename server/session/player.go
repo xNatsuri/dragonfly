@@ -923,7 +923,7 @@ func gameTypeFromMode(mode world.GameMode) int32 {
 		return packet.GameTypeCreative
 	}
 	if !mode.Visible() && !mode.HasCollision() {
-		return packet.GameTypeSurvivalSpectator
+		return packet.GameTypeSpectator
 	}
 	return packet.GameTypeSurvival
 }
