@@ -125,6 +125,7 @@ func init() {
 	registerAll(allAnvils())
 	registerAll(allBanners())
 	registerAll(allBarrels())
+	registerAll(allButtons())
 	registerAll(allBasalt())
 	registerAll(allBeetroot())
 	registerAll(allBlackstone())
@@ -366,6 +367,10 @@ func init() {
 	world.RegisterItem(item.Bucket{Content: item.LiquidBucketContent(Lava{})})
 	world.RegisterItem(item.Bucket{Content: item.LiquidBucketContent(Water{})})
 	world.RegisterItem(item.Bucket{Content: item.MilkBucketContent()})
+
+	for _, t := range ButtonTypes() {
+		world.RegisterItem(Button{Type: t})
+	}
 
 	for _, b := range allLight() {
 		world.RegisterItem(b.(world.Item))
