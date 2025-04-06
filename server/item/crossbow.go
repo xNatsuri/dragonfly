@@ -24,6 +24,9 @@ func (c Crossbow) Charge(releaser Releaser, _ *world.Tx, ctx *UseContext, durati
 
 	creative := releaser.GameMode().CreativeInventory()
 	held, left := releaser.HeldItems()
+	if chargeDuration, _ := c.chargeDuration(held); duration < chargeDuration {
+		return false
+	}
 
 	projectileItem, ok := c.findProjectile(releaser, ctx)
 	if !ok {
@@ -111,7 +114,7 @@ func (c Crossbow) findProjectile(r Releaser, ctx *UseContext) (Stack, bool) {
 
 // ReleaseCharge checks if the item is fully charged and, if so, releases it.
 func (c Crossbow) ReleaseCharge(releaser Releaser, tx *world.Tx, ctx *UseContext) bool {
-	if c.Item.Empty() || !releaser.GameMode().HasCollision() {
+	if c.Item.Empty() {
 		return false
 	}
 
