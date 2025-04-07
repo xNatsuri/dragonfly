@@ -137,7 +137,7 @@ func (c Crossbow) ReleaseCharge(releaser Releaser, tx *world.Tx, ctx *UseContext
 			Position: eyePosition(releaser),
 			Velocity: dirVec.Mul(5.15),
 			Rotation: rot,
-		}, 9, releaser, false, false, !creative, 0, c.Item.Item().(Arrow).Tip)
+		}, 9, releaser, false, false, !creative, 0, 1, c.Item.Item().(Arrow).Tip)
 		tx.AddEntity(arrow)
 		ctx.DamageItem(1)
 	}

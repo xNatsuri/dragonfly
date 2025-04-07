@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/df-mc/dragonfly/server"
+	"github.com/df-mc/dragonfly/server/entity/effect"
+	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/chat"
+	"github.com/df-mc/dragonfly/server/world"
 	"github.com/pelletier/go-toml"
 	"log/slog"
 	"os"
@@ -22,6 +25,18 @@ func main() {
 
 	srv.Listen()
 	for p := range srv.Accept() {
+		p.SetGameMode(world.GameModeSurvival)
+
+		opts := world.EntitySpawnOpts{
+			Position: p.Position(),
+		}
+
+		ent := opts.New(player.Type, player.Config{Name: p.Name(), Position: p.Position(), Skin: p.Skin()})
+
+		e := p.Tx().AddEntity(ent)
+
+		e.(*player.Player).SetMaxHealth(1)
+		e.(*player.Player).Heal(1, effect.InstantHealingSource{})
 		_ = p
 	}
 }
