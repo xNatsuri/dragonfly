@@ -82,6 +82,8 @@ type ProjectileBehaviourConfig struct {
 	// CollisionPosition specifies the position that the projectile is stuck
 	// in. If non-empty, the entity will not move.
 	CollisionPosition cube.Pos
+	// Tick adds additional behavior.
+	Tick func(e *Ent, tx *world.Tx)
 }
 
 func (conf ProjectileBehaviourConfig) Apply(data *world.EntityData) {
@@ -144,6 +146,8 @@ func (lt *ProjectileBehaviour) Tick(e *Ent, tx *world.Tx) *Movement {
 		_ = e.Close()
 		return nil
 	}
+
+	lt.conf.Tick(e, tx)
 
 	if lt.collided && lt.tickAttached(e, tx) {
 		if lt.ageCollided > 1200 {
