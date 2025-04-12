@@ -24,9 +24,9 @@ func (c Crossbow) Charge(releaser Releaser, _ *world.Tx, ctx *UseContext, durati
 
 	creative := releaser.GameMode().CreativeInventory()
 	held, left := releaser.HeldItems()
-	if chargeDuration, _ := c.chargeDuration(held); duration < chargeDuration {
-		return false
-	}
+	//if chargeDuration, _ := c.chargeDuration(held); duration < chargeDuration {
+	//	return false
+	//}
 
 	projectileItem, ok := c.findProjectile(releaser, ctx)
 	if !ok {
