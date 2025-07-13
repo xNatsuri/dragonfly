@@ -129,7 +129,7 @@ func (c Crossbow) ReleaseCharge(releaser Releaser, tx *world.Tx, ctx *UseContext
 	if firework, isFirework := c.Item.Item().(Firework); isFirework {
 		createFirework := tx.World().EntityRegistry().Config().Firework
 		fireworkEntity := createFirework(world.EntitySpawnOpts{
-			Position: torsoPosition(releaser),
+			Position: eyePosition(releaser),
 			Velocity: dirVec.Mul(0.8),
 			Rotation: rot,
 		}, firework, releaser, 1.0, 0, false)
@@ -138,7 +138,7 @@ func (c Crossbow) ReleaseCharge(releaser Releaser, tx *world.Tx, ctx *UseContext
 	} else {
 		createArrow := tx.World().EntityRegistry().Config().Arrow
 		arrow := createArrow(world.EntitySpawnOpts{
-			Position: torsoPosition(releaser),
+			Position: eyePosition(releaser),
 			Velocity: dirVec.Mul(5.15),
 			Rotation: rot,
 		}, 9, releaser, false, false, !creative, 0, c.Item.Item().(Arrow).Tip)
