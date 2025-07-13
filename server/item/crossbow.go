@@ -69,6 +69,10 @@ func (c Crossbow) ContinueCharge(releaser Releaser, tx *world.Tx, ctx *UseContex
 	}
 
 	if progress := float64(duration) / float64(chargeDuration); progress >= 1 {
+		// hack to prevent de-sync when punch reloading
+		if progress >= 1.1 {
+			releaser.UseItem()
+		}
 		tx.PlaySound(releaser.Position(), sound.CrossbowLoad{Stage: sound.CrossbowLoadingEnd, QuickCharge: qcLevel > 0})
 	}
 }
