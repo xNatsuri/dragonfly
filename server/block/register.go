@@ -125,6 +125,7 @@ func init() {
 	registerAll(allAnvils())
 	registerAll(allBanners())
 	registerAll(allBarrels())
+	registerAll(allButtons())
 	registerAll(allBasalt())
 	registerAll(allBeetroot())
 	registerAll(allBlackstone())
@@ -370,6 +371,11 @@ func init() {
 	for _, b := range allLight() {
 		world.RegisterItem(b.(world.Item))
 	}
+
+	for _, t := range ButtonTypes() {
+		world.RegisterItem(Button{Type: t})
+	}
+
 	for _, c := range allCoral() {
 		world.RegisterItem(c.(world.Item))
 	}
