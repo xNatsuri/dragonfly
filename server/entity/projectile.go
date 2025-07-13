@@ -63,6 +63,8 @@ type ProjectileBehaviourConfig struct {
 	// false, the projectile will break when hitting a block (like a snowball).
 	// If set to true, the projectile will survive like an arrow does.
 	SurviveBlockCollision bool
+	// SurviveEntityCollision ...
+	SurviveEntityCollision bool
 	// BlockCollisionVelocityMultiplier is the multiplier used to modify the
 	// velocity of a projectile that has SurviveBlockCollision set to true. The
 	// default, 0, will cause the projectile to lose its velocity completely. A
@@ -170,6 +172,10 @@ func (lt *ProjectileBehaviour) Tick(e *Ent, tx *world.Tx) *Movement {
 	case trace.EntityResult:
 		if l, ok := r.Entity().(Living); ok && lt.conf.Damage >= 0 {
 			lt.hitEntity(l, e, vel)
+		}
+		if lt.conf.SurviveEntityCollision {
+			e.SetVelocity(e.Velocity().Mul(2))
+			return m
 		}
 	case trace.BlockResult:
 		bpos := r.BlockPosition()
@@ -313,10 +319,17 @@ func (lt *ProjectileBehaviour) tickMovement(e *Ent, tx *world.Tx) (*Movement, tr
 
 				vel = mgl64.Vec3{x * mx, y * my, z * mz}
 			} else {
-				vel = zeroVec3
+				if !lt.conf.SurviveEntityCollision {
+					vel = zeroVec3
+				}
 			}
-			end = hit.Position()
+			if _, ok := hit.(trace.BlockResult); ok {
+				end = hit.Position()
+			}
 		}
+	}
+	if _, ok := hit.(trace.EntityResult); ok {
+		return &Movement{v: viewers, e: e, pos: end, vel: vel, dpos: pos, dvel: velBefore, rot: rot}, hit
 	}
 	return &Movement{v: viewers, e: e, pos: end, vel: vel, dpos: end.Sub(pos), dvel: vel.Sub(velBefore), rot: rot}, hit
 }
