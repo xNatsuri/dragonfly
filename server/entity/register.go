@@ -47,11 +47,14 @@ var conf = world.EntityRegistryConfig{
 	SplashPotion: func(opts world.EntitySpawnOpts, t any, owner world.Entity) *world.EntityHandle {
 		return NewSplashPotion(opts, t.(potion.Potion), owner)
 	},
-	Arrow: func(opts world.EntitySpawnOpts, damage float64, owner world.Entity, critical, disallowPickup, obtainArrowOnPickup bool, punchLevel int, tip any) *world.EntityHandle {
+	Arrow: func(opts world.EntitySpawnOpts, damage float64, owner world.Entity, critical, disallowPickup, obtainArrowOnPickup bool, punchLevel, piercingLevel int, tip any) *world.EntityHandle {
 		conf := arrowConf
 		conf.Damage, conf.Potion, conf.Owner = damage, tip.(potion.Potion), owner.H()
 		conf.KnockBackForceAddend = float64(punchLevel) * enchantment.Punch.KnockBackMultiplier()
 		conf.DisablePickup = disallowPickup
+		if piercingLevel > 0 {
+			conf.SurviveEntityCollision = true
+		}
 		if obtainArrowOnPickup {
 			conf.PickupItem = item.NewStack(item.Arrow{Tip: tip.(potion.Potion)}, 1)
 		}
