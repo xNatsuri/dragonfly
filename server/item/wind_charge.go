@@ -6,7 +6,8 @@ import (
 	"github.com/df-mc/dragonfly/server/world"
 )
 
-// WindCharge ...
+// WindCharge is a projectile that is crafted from breeze rod. Wind charges knock mobs back when thrown and deals 6 damage.
+// When thrown at a player, it deals no damage and players won't receive fall damage when they land.
 type WindCharge struct{}
 
 // Use ...

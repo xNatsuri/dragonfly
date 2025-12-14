@@ -1,7 +1,7 @@
 package item
 
-import "time"
-
+// Mace is a melee weapon that can do smash attacks which deal more damage the farther the user falls before hitting an entity.
+// Landing a successful smash attack causes the user to land without taking any fall damage accumulated before attacking.
 type Mace struct{}
 
 // MaxCount always returns 1.
@@ -22,11 +22,6 @@ func (m Mace) DurabilityInfo() DurabilityInfo {
 // AttackDamage ...
 func (m Mace) AttackDamage() float64 {
 	return 5
-}
-
-// Cooldown ...
-func (Mace) Cooldown() time.Duration {
-	return time.Second / 2
 }
 
 // EncodeItem ...
