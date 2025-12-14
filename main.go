@@ -2,11 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/df-mc/dragonfly/server"
-	"github.com/df-mc/dragonfly/server/player/chat"
-	"github.com/pelletier/go-toml"
 	"log/slog"
 	"os"
+
+	"github.com/df-mc/dragonfly/server"
+	"github.com/df-mc/dragonfly/server/item"
+	"github.com/df-mc/dragonfly/server/player"
+	"github.com/df-mc/dragonfly/server/player/chat"
+	"github.com/df-mc/dragonfly/server/world"
+	"github.com/pelletier/go-toml"
 )
 
 func main() {
@@ -22,6 +26,16 @@ func main() {
 
 	srv.Listen()
 	for p := range srv.Accept() {
+		opts := world.EntitySpawnOpts{
+			Position: p.Position(),
+		}
+
+		ent := opts.New(player.Type, player.Config{Name: p.Name(), Position: p.Position(), Skin: p.Skin()})
+		p.Tx().AddEntity(ent)
+		p.SetGameMode(world.GameModeSurvival)
+		p.Inventory().Clear()
+		p.Inventory().SetItem(0, item.NewStack(item.Mace{}, 1))
+		p.Inventory().SetItem(1, item.NewStack(item.WindCharge{}, 64))
 		_ = p
 	}
 }

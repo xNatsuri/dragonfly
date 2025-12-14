@@ -96,3 +96,11 @@ type FireCharge struct{ sound }
 
 // Totem is a sound played when a player uses a totem.
 type Totem struct{ sound }
+
+// MaceSmash is a sound played when a player uses a mace.
+type MaceSmash struct {
+	Ground bool
+	Heavy  bool
+
+	sound
+}

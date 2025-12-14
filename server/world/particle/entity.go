@@ -32,3 +32,10 @@ type Effect struct {
 
 // EntityFlame is a particle shown when an entity is set on fire.
 type EntityFlame struct{ particle }
+
+// WindCharge is a particle shown when a wind charge hits something.
+type WindCharge struct{ particle }
+
+type SmashAttack struct {
+	particle
+}
