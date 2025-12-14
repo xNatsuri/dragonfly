@@ -99,8 +99,11 @@ type Totem struct{ sound }
 
 // MaceSmash is a sound played when a player uses a mace.
 type MaceSmash struct {
+	// Ground is when the smash attack entity was on the ground.
 	Ground bool
-	Heavy  bool
+	// Heavy is when the ground smash was from a fall distance greater than 5 blocks.
+	// Only applies when Ground is true.
+	Heavy bool
 
 	sound
 }

@@ -1727,7 +1727,7 @@ func (p *Player) AttackEntity(e world.Entity) bool {
 
 		p.tx.AddParticle(targetPos, particle.SmashAttack{})
 
-		p.maceSmashAreaDamage(living, dmg)
+		p.maceSmashAreaEffect(living, dmg)
 	} else {
 		p.tx.PlaySound(entity.EyePosition(e), sound.Attack{Damage: !mgl64.FloatEqual(n, 0)})
 	}
@@ -1762,15 +1762,15 @@ func (p *Player) AttackEntity(e world.Entity) bool {
 	return true
 }
 
-// maceSmashAreaDamage deals area damage around the target for mace smash attacks
-func (p *Player) maceSmashAreaDamage(target entity.Living, primaryDamage float64) {
+// maceSmashAreaEffect deals area damage and knockback around the target for mace smash attacks
+func (p *Player) maceSmashAreaEffect(target entity.Living, primaryDamage float64) {
 	const radius = 2.5
 
 	targetPos := target.Position()
 	nearby := p.tx.EntitiesWithin(target.H().Type().BBox(target).Translate(targetPos).Grow(radius))
 
 	for victim := range nearby {
-		if victim == target || victim == p {
+		if victim.H() == target.H() || victim.H() == p.H() {
 			continue
 		}
 
@@ -1782,7 +1782,6 @@ func (p *Player) maceSmashAreaDamage(target entity.Living, primaryDamage float64
 
 			falloff := 1.0 - (distance / radius)
 			areaDmg := (primaryDamage * 0.5) * falloff
-
 			living.Hurt(areaDmg, entity.AttackDamageSource{Attacker: p})
 		}
 	}
