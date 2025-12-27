@@ -244,8 +244,22 @@ func allBeds() (beds []world.Block) {
 	return
 }
 
-// CanRespawnOn ...
-func (Bed) CanRespawnOn() bool {
+// Sleep ...
+func (b Bed) Sleep(pos cube.Pos, tx *world.Tx, s world.Sleeper) bool {
+	headSide, headPos, ok := b.head(pos, tx)
+	if !ok {
+		return false
+	}
+	if s == nil {
+		headSide.Sleeper = nil
+		tx.SetBlock(headPos, headSide, nil)
+		return true
+	}
+	if headSide.Sleeper != nil {
+		return false
+	}
+	headSide.Sleeper = s.H()
+	tx.SetBlock(headPos, headSide, nil)
 	return true
 }
 

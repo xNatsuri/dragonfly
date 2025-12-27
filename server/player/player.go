@@ -978,13 +978,15 @@ func (p *Player) spawnLocation() (playerSpawn cube.Pos, w *world.World, spawnBlo
 	w = tx.World()
 	previousDimension = w.Dimension()
 	playerSpawn = w.PlayerSpawn(p.UUID())
-	if b, ok := tx.Block(playerSpawn).(block.Bed); ok && b.CanRespawnOn() {
+	if b, ok := tx.Block(playerSpawn).(block.SpawnAnchor); ok {
 		pos, ok := b.SafeSpawn(playerSpawn, tx)
 		if ok {
 			return pos, w, false, previousDimension
 		}
 
-		p.Messaget(chat.MessageBedNotValid)
+		if _, ok := tx.Block(playerSpawn).(block.Bed); ok {
+			p.Messaget(chat.MessageBedNotValid)
+		}
 	}
 
 	// We can use the principle here that returning through a portal of a specific dimension inside that dimension will
@@ -1213,19 +1215,17 @@ func (p *Player) Sleep(pos cube.Pos) {
 	}
 
 	tx := p.tx
-	b, ok := tx.Block(pos).(block.Bed)
-	if !ok || b.Sleeper != nil {
+	b, ok := tx.Block(pos).(block.Sleepable)
+	if !ok || !b.Sleep(pos, tx, p) {
 		// The player cannot sleep here.
 		return
 	}
 
 	ctx, sendReminder := event.C(p), true
 	if p.Handler().HandleSleep(ctx, &sendReminder); ctx.Cancelled() {
+		b.Sleep(pos, tx, nil)
 		return
 	}
-
-	b.Sleeper = p.H()
-	tx.SetBlock(pos, b, nil)
 
 	tx.World().SetRequiredSleepDuration(time.Millisecond * 5050)
 
@@ -1257,9 +1257,8 @@ func (p *Player) Wake() {
 	p.updateState()
 
 	pos := p.sleepPos
-	if b, ok := tx.Block(pos).(block.Bed); ok {
-		b.Sleeper = nil
-		tx.SetBlock(pos, b, nil)
+	if b, ok := tx.Block(pos).(block.Sleepable); ok {
+		b.Sleep(pos, tx, nil)
 	}
 }
 
