@@ -1,14 +1,15 @@
 package block
 
 import (
+	"math/rand/v2"
+	"time"
+
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/block/customblock"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/df-mc/dragonfly/server/world/sound"
 	"github.com/go-gl/mathgl/mgl64"
-	"math/rand/v2"
-	"time"
 )
 
 // Activatable represents a block that may be activated by a viewer of the world. When activated, the block
@@ -32,6 +33,20 @@ type Punchable interface {
 	// Punch punches the block at a specific block position. The face clicked is passed, as well as the
 	// world in which the block was punched and the viewer that punched it.
 	Punch(pos cube.Pos, clickedFace cube.Face, tx *world.Tx, u item.User)
+}
+
+// Sleepable represents a block that an entity can sleep on.
+type Sleepable interface {
+	// Sleep attempts to make the sleeper sleep on the block. Passing nil as the sleeper clears the
+	// sleeping entity (wake). Sleep returns false if sleeping was not possible.
+	Sleep(pos cube.Pos, tx *world.Tx, s world.Sleeper) bool
+}
+
+// SpawnAnchor represents a block that may be used as a respawn point.
+type SpawnAnchor interface {
+	// SafeSpawn returns a safe spawn position near the block. The bool returned is false if no safe
+	// position was found.
+	SafeSpawn(pos cube.Pos, tx *world.Tx) (cube.Pos, bool)
 }
 
 // LightEmitter represents a block that emits light when placed. Blocks such as torches or lanterns implement
