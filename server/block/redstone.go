@@ -89,7 +89,7 @@ func updateAroundRedstone(centre cube.Pos, tx *world.Tx, ignoredFaces ...cube.Fa
 	}
 }
 
-// updateRedstone runs a redstone update for a position if its block handles one.
+// updateRedstone dispatches a cancellable redstone update to the block at pos, if it handles redstone updates.
 func updateRedstone(pos cube.Pos, tx *world.Tx) {
 	r, ok := tx.Block(pos).(RedstoneUpdater)
 	if !ok {
