@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/df-mc/dragonfly/server/block/cube"
-	"github.com/df-mc/dragonfly/server/event"
 	"github.com/df-mc/dragonfly/server/player/chat"
 	"github.com/go-gl/mathgl/mgl64"
 )
@@ -281,10 +280,6 @@ func (tx *Tx) BroadcastSleepingReminder(sleeper Sleeper) {
 // RedstonePower returns the level of redstone power being emitted from a position to the provided face.
 func (tx *Tx) RedstonePower(pos cube.Pos, face cube.Face, accountForDust bool) (power int) {
 	b := tx.Block(pos)
-	ctx := event.C(tx)
-	if tx.World().Handler().HandleRedstoneUpdate(ctx, pos); ctx.Cancelled() {
-		return 0
-	}
 	if c, ok := b.(Conductor); ok {
 		return c.WeakPower(pos, face, tx, accountForDust)
 	}
