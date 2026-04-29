@@ -92,8 +92,8 @@ func (t RedstoneTorch) NeighbourUpdateTick(pos, _ cube.Pos, tx *world.Tx) {
 // RedstoneUpdate is called when the redstone power state changes nearby.
 // This method handles burnout recovery and schedules state changes.
 func (t RedstoneTorch) RedstoneUpdate(pos cube.Pos, tx *world.Tx) {
-	currentTime := int64(tx.World().Time())
-	if _, burnedOut, recoverable := tx.Redstone().TorchBurnoutStatus(pos, currentTime); burnedOut {
+	currentTick := tx.CurrentTick()
+	if _, burnedOut, recoverable := tx.Redstone().TorchBurnoutStatus(pos, currentTick); burnedOut {
 		if recoverable {
 			tx.Redstone().ClearTorchBurnout(pos)
 
@@ -115,18 +115,18 @@ func (t RedstoneTorch) RedstoneUpdate(pos cube.Pos, tx *world.Tx) {
 // ScheduledTick is called when a scheduled block update occurs.
 // This method handles state changes and checks for burnout conditions.
 func (t RedstoneTorch) ScheduledTick(pos cube.Pos, tx *world.Tx, _ *rand.Rand) {
-	currentTime := int64(tx.World().Time())
-	if tx.Redstone().TorchBurnoutScheduledTick(pos, currentTime) {
+	currentTick := tx.CurrentTick()
+	if tx.Redstone().TorchBurnoutScheduledTick(pos, currentTick) {
 		return
 	}
 
 	shouldBeLit := t.inputStrength(pos, tx) == 0
 	if shouldBeLit == t.Lit {
-		tx.Redstone().PruneTorchBurnout(pos, currentTime)
+		tx.Redstone().PruneTorchBurnout(pos, currentTick)
 		return
 	}
 
-	if tx.Redstone().RecordTorchStateChange(pos, currentTime) {
+	if tx.Redstone().RecordTorchStateChange(pos, currentTick) {
 		t.burnOut(pos, tx)
 		return
 	}

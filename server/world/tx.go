@@ -312,6 +312,14 @@ func (tx *Tx) World() *World {
 	return tx.w
 }
 
+// CurrentTick returns the current tick of the transaction's world.
+func (tx *Tx) CurrentTick() int64 {
+	w := tx.World()
+	w.set.Lock()
+	defer w.set.Unlock()
+	return w.set.CurrentTick
+}
+
 // Redstone returns the transient redstone runtime state owned by the transaction's world.
 func (tx *Tx) Redstone() *redstone.State {
 	return &tx.World().redstone
